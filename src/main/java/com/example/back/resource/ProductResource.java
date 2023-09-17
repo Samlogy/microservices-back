@@ -1,9 +1,11 @@
 package com.example.back.resource;
 
 import com.example.back.dto.CreateProductRequest;
+import com.example.back.dto.GetProductsRequest;
 import com.example.back.model.Product;
 import com.example.back.repository.ProductRepository;
 import com.example.back.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,28 +19,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+//@Tag(name = "Product", description = "Product ecommerce api v1.0.0")
 @RestController
 @RequestMapping("api/v1/product")
 @Slf4j
 @Validated
 public class ProductResource {
     private final ProductService productService;
-    private final ProductRepository productRepository;
 
-    public ProductResource(ProductService productService, ProductRepository productRepository) {
+    public ProductResource(ProductService productService) {
         this.productService = productService;
-        this.productRepository = productRepository;
     }
 
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> getProducts(@RequestParam(required = false) String name,
-                                                     @RequestParam(required = false) String category,
-                                                     @RequestParam(required = false) Float priceMin,
-                                                     @RequestParam(required = false) Float priceMax,
-                                                     @RequestParam(required = false) String sortOrder,
-                                                     @RequestParam(defaultValue = "1") int page,
-                                                     @RequestParam(defaultValue = "5") int size){
-        Map<String, Object> response = productService.getProducts(name, category, priceMin, priceMax, sortOrder, page, size);
+    public ResponseEntity<Map<String, Object>> getProducts(@RequestParam GetProductsRequest requestDto){
+        Map<String, Object> response = productService.getProducts(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

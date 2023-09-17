@@ -1,7 +1,19 @@
 app:
   name: ecommerce_api
   version: 1.0.0
+  openapi:
+    dev-url: samlogy.com
 
+  springdoc:
+    api-docs:
+      path: /samlogy-api-docs
+    packages-to-scan: com.samlogy.spring.swagger.controller
+    swagger-ui:
+      filter: true
+      operationsSorter: method
+      path: /samlogy-documentation
+      tagsSorter: alpha
+      tryItOutEnabled: true
 
 spring:
   jpa:

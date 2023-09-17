@@ -1,6 +1,7 @@
 package com.example.back.service;
 
 import com.example.back.dto.CreateProductRequest;
+import com.example.back.dto.GetProductsRequest;
 import com.example.back.exception.NotFoundException;
 import com.example.back.model.Product;
 import com.example.back.repository.ProductRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,16 +30,30 @@ public class ProductService {
     }
 
 
-    public Map<String, Object> getProducts(String name, String category, float priceMin, float priceMax, String sortOrder, int page, int size) {
-        Pageable paging = PageRequest.of(page, size);
-
+    public Map<String, Object> getProducts(GetProductsRequest requestDto) {
+        List<Sort.Order> sortOrders = new ArrayList<Sort.Order>();
         Page<Product> pageProds;
-//        if (name != null)
 
-//        if (name == null)
-//            pageProds = productRepository.findAll(paging);
-//        else
-            pageProds = productRepository.filterProducts(name, category, priceMin, priceMax, paging);
+        String[] sorts = requestDto.getSorts();
+
+        if (sorts[0].contains(",")) {
+            for (String sortOrder : sorts) {
+                String[] _sort = sortOrder.split(",");
+                sortOrders.add(new Sort.Order(getSortDirection(_sort[1]), _sort[0]));
+            }
+        } else {
+            sortOrders.add(new Sort.Order(getSortDirection(sorts[1]), sorts[0]));
+        }
+        Pageable pageRequest = PageRequest.of(requestDto.getPage(), requestDto.getSize(), Sort.by(sortOrders));
+
+        if (requestDto.getName() == null)
+            pageProds = productRepository.findAll(pageRequest);
+        else
+            pageProds = productRepository.findByNameContainingAndCategoryContainingAndPriceBetween(requestDto.getName(),
+                    requestDto.getCategory(),
+                    requestDto.getPriceMin(),
+                    requestDto.getPriceMax(),
+                    pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("products", pageProds.getContent());
@@ -63,5 +79,10 @@ public class ProductService {
                 .image(requestDto.getImage())
                 .build();
         return productRepository.save(newProduct).getId();
+    }
+
+    private Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("desc")) return Sort.Direction.DESC;
+        return Sort.Direction.ASC;
     }
 }
