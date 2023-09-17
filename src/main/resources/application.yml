@@ -1,0 +1,17 @@
+app:
+  name: ecommerce_api
+  version: 1.0.0
+
+
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: validate
+      naming:
+        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: int
