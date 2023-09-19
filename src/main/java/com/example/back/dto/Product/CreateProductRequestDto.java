@@ -1,6 +1,5 @@
-package com.example.back.dto;
+package com.example.back.dto.Product;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateProductRequest {
+public class CreateProductRequestDto {
     private Integer id;
     private String name;
     private String description;

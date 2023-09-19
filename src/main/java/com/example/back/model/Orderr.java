@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -29,10 +32,7 @@ public class Orderr {
     @Column(name = "order_date")
     private LocalDate orderDate;
 
-    @OneToMany(mappedBy = "orderr", cascade = CascadeType.ALL)
-    private List<OrderItem> orderLineItemsList;
-
-//    @OneToMany
-//    @JoinColumn(name = "client_id")
-//    private Client client;
+    @OneToMany(mappedBy = "orderr", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 }

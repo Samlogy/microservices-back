@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +21,8 @@ public class OrderItem {
     private String name;
     private int quantity;
     private float price;
-    @ManyToOne
-    @JoinColumn(name = "orderr_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "orderr_id")
     private Orderr orderr;
 }

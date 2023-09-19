@@ -1,15 +1,10 @@
 package com.example.back.resource;
 
-import com.example.back.dto.CreateProductRequest;
-import com.example.back.dto.GetProductsRequest;
+import com.example.back.dto.Product.CreateProductRequestDto;
+import com.example.back.dto.Product.GetProductsRequestDto;
 import com.example.back.model.Product;
-import com.example.back.repository.ProductRepository;
 import com.example.back.service.ProductService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import com.example.back.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +27,7 @@ public class ProductResource {
     }
 
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> getProducts(@RequestParam GetProductsRequest requestDto){
+    public ResponseEntity<?> getProducts(GetProductsRequestDto requestDto){
         Map<String, Object> response = productService.getProducts(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -44,7 +39,7 @@ public class ProductResource {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest requestDto){
+    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequestDto requestDto){
         int id = productService.createProduct(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

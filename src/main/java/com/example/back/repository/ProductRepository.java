@@ -9,20 +9,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-
-//    @Query("SELECT p FROM Product p " +
-//            "WHERE (:name IS NULL OR p.name LIKE LOWER(CONCAT('%', :name, '%'))) " +
-//            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
-//            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
-//            "AND (:category IS NULL OR p.category = :category)"
-//    )
-    Page<Product> findByNameContainingAndCategoryContainingAndPriceBetween(
-            String name,
-            String category,
-            float priceMin,
-            float priceMax,
+    @Query("SELECT p FROM Product p " +
+            "WHERE (:name IS NULL OR p.name LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:priceMin IS NULL OR p.price >= :priceMin) " +
+            "AND (:priceMax IS NULL OR p.price <= :priceMax) " +
+            "AND (:category IS NULL OR p.category = :category)")
+    Page<Product> findAllByFilters(
+            @Param("name") String name,
+            @Param("priceMin") Float priceMin,
+            @Param("priceMax") Float priceMax,
+            @Param("category") String category,
             Pageable pageable
     );
 }

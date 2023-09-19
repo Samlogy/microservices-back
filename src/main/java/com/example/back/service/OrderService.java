@@ -1,61 +1,41 @@
 package com.example.back.service;
 
-import com.example.back.dto.CreateOrderRequest;
-import com.example.back.dto.GetAllOrdersDto;
+import com.example.back.dto.Order.CreateOrderRequestDto;
 import com.example.back.exception.BadRequestionException;
 import com.example.back.exception.NotFoundException;
+import com.example.back.model.OrderItem;
 import com.example.back.model.Orderr;
+import com.example.back.repository.OrderItemRepository;
 import com.example.back.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
 @Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
-
-    public Map<String, Object> getAllOrders(GetAllOrdersDto requestDto) {
-        List<Order> sortOrders = new ArrayList<Order>();
-        Page<Orderr> pageOrders;
-
-        String[] sorts = requestDto.getSorts();
-
-        if (sorts[0].contains(",")) {
-            for (String sortOrder : sorts) {
-                String[] _sort = sortOrder.split(",");
-                sortOrders.add(new Order(getSortDirection(_sort[1]), _sort[0]));
-            }
-        } else {
-            sortOrders.add(new Order(getSortDirection(sorts[1]), sorts[0]));
-        }
-        Pageable pageRequest = PageRequest.of(requestDto.getPage(), requestDto.getSize(), Sort.by(sortOrders));
-
-        pageOrders = orderRepository.findAll(pageRequest);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("orders", pageOrders.getContent());
-        response.put("currentPage", pageOrders.getNumber());
-        response.put("totalItems", pageOrders.getTotalElements());
-        response.put("totalPages", pageOrders.getTotalPages());
-        return  response;
+//    Map<String, Object> GetOrdersRequestDto requestDto
+    public List<Orderr> getAllOrders() {
+//        Integer orderId = 19;
+//        Orderr order = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new NotFoundException("Order does not exist with this ID: " + orderId));
+        return orderRepository.findAll();
     }
 
     public int cancelOrder(Integer orderId) {
@@ -67,6 +47,7 @@ public class OrderService {
         LocalDate deadLineDate = orderDate.plusDays(2);
 
        if (currentDate.isBefore(deadLineDate) || currentDate.isEqual(deadLineDate)) {
+           orderItemRepository.deleteByOrderr(order);
            orderRepository.deleteById(orderId);
            return 1;
        }
@@ -88,18 +69,31 @@ public class OrderService {
         throw new BadRequestionException("Order date is more than 2 days old, it was confirmed by default !");
     }
 
-    public int createOrder(CreateOrderRequest requestDto, Integer userId) {
-//        Customer customer = orderRepository.findById(userId)
-//                .orElseThrow(() -> new NotFoundException("Customer does not exist with this ID: " + userId));
+    public int createOrder(CreateOrderRequestDto requestDto, Integer userId) {
         Orderr newOrder = Orderr.builder()
                 .totalPrice(requestDto.getTotalPrice())
                 .status("PENDING")
                 .orderDate(LocalDate.now())
-                .orderLineItemsList(requestDto.getOrderLineItemsList())
                 .build();
-        return orderRepository.save(newOrder).getId();
+        Orderr orderAdded = orderRepository.save(newOrder);
+
+        List<OrderItem> orderItems = requestDto.getOrderItems();
+
+        List<OrderItem> orderItemsUpdated = orderItems.stream().map(item -> {
+            item.setOrderr(orderAdded);
+            return item;
+        }).collect(Collectors.toList());
+        orderItemRepository.saveAll(orderItemsUpdated);
+        return 1;
     }
 
+    public Orderr getOrderById(Integer orderId) {
+        Orderr order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order does not exist with this ID: " + orderId));
+       List<OrderItem> items = orderItemRepository.findByOrderr(order);
+        order.setOrderItems(items);
+      return order;
+    }
 
     private Sort.Direction getSortDirection(String direction) {
         if (direction.equals("desc")) return Sort.Direction.DESC;

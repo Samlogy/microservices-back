@@ -1,6 +1,5 @@
-package com.example.back.dto;
+package com.example.back.dto.Shipping;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateShippingRequest {
+public class CreateShippingRequestDto {
     private String email;
     private String address;
     private String contact;

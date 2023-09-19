@@ -1,9 +1,6 @@
 package com.example.back.resource;
 
-import com.example.back.dto.CreateProductRequest;
-import com.example.back.dto.CreateShippingRequest;
-import com.example.back.repository.ProductRepository;
-import com.example.back.service.ProductService;
+import com.example.back.dto.Shipping.CreateShippingRequestDto;
 import com.example.back.service.ShippingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +25,7 @@ public class ShippingResource {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createShipping(@RequestBody CreateShippingRequest requestDto){
+    public ResponseEntity<?> createShipping(@RequestBody CreateShippingRequestDto requestDto){
         int id = shippingService.createShipping(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

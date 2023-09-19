@@ -1,4 +1,4 @@
-package com.example.back.dto;
+package com.example.back.dto.Order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetAllOrdersDto {
+public class GetOrdersRequestDto {
     private int page = 0;
     private int size = 5;
     private String[] sorts = {"orderDate,desc"};

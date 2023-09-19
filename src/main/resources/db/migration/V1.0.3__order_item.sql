@@ -4,5 +4,7 @@ create table if not exists order_item (
     quantity INT,
     price REAL,
     orderr_id INTEGER,
-    FOREIGN KEY (orderr_id) REFERENCES orderr(id)
+    CONSTRAINT fk_orderr_order_item
+            FOREIGN KEY(orderr_id)
+            REFERENCES orderr(id)
 );
