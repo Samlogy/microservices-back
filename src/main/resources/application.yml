@@ -4,6 +4,11 @@ app:
   openapi:
     dev-url: samlogy.com
 
+oauth2:
+  resource-server:
+    jwt:
+      issuer-uri: http://ci.check-consulting.net:10000/auth/realms/staff-manager-collab
+
   springdoc:
     api-docs:
       path: /samlogy-api-docs

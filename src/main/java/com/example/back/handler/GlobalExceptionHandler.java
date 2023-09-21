@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ResponseError.builder()
-                        .success(false)
                         .message(ex.getMessage())
                         .build()
                 );
@@ -35,7 +34,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ResponseError.builder()
-                        .success(false)
                         .message(ex.getMessage())
                         .build()
                 );
