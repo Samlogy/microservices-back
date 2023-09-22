@@ -1,38 +1,31 @@
 package com.example.back.configuration;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 
-import java.util.List;
 
-@Configuration
+
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Ecommerce API",
+                contact = @Contact(
+                        name = "Samlogy",
+                        url = "https://github.com/Samlogy"
+                ),
+                version = "1"
+        ),
+        servers = {
+                @Server(
+                        url = "http://qua-vm-1.check-consulting.net:8080",
+                        description = "Serveur Environnement QUA - VM N°1"
+                ),
+                @Server(
+                        url = "http://qua-vm-2.check-consulting.net:8080",
+                        description = "Serveur Environnement QUA - VM N°2"
+                )
+        }
+)
 public class OpenAPIConfig {
-
-    @Value("${app.openapi.dev-url}")
-    private String devUrl;
-
-
-    @Bean
-    public OpenAPI myOpenAPI() {
-        Server devServer = new Server();
-        devServer.setUrl(devUrl);
-        devServer.setDescription("Server URL in Development environment");
-
-        Contact contact = new Contact();
-        contact.setEmail("senanisammy@gmail.com");
-        contact.setName("samlogy");
-
-        Info info = new Info()
-                .title("Tutorial Management API")
-                .version("1.0")
-                .contact(contact)
-                .description("Ecommerce API v1.0.0");
-
-        return new OpenAPI().info(info).servers(List.of(devServer));
-    }
 }
