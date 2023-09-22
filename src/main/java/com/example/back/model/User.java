@@ -18,7 +18,6 @@ import java.util.List;
 @Builder
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class User {
-
     private String userName;
     private List<String> roles;
     private boolean authenticated;

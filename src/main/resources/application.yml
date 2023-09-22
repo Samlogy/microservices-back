@@ -7,7 +7,7 @@ app:
 oauth2:
   resource-server:
     jwt:
-      issuer-uri: http://ci.check-consulting.net:10000/auth/realms/staff-manager-collab
+      issuer-uri:  http://localhost:10000/auth//realms/monolithic
 
   springdoc:
     api-docs:
